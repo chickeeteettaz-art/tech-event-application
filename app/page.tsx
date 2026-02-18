@@ -2,7 +2,13 @@ import React from 'react'
 
 const Page = () => {
     return (
-        <h1>Home page design</h1>
+        <section>
+            <h1 className={'text-center'}>The Hub for Every Dev Event <br/> You cannot miss</h1>
+            <p className='text-center mt-5'>
+                Hackathons, Meetups, and Conferences, All in one Place
+            </p>
+        </section>
+
     )
 }
 export default Page
