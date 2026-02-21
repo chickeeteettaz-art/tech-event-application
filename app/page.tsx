@@ -1,7 +1,11 @@
 import React from 'react'
 import ExploreButton from "@/components/ExploreButton";
+import EventCard from "@/components/EventCard";
+import { events } from "@/lib/constants";
 
 const Page = () => {
+
+    // events imported from @/lib/constants
     return (
         <section>
             <h1 className={'text-center'}>The Hub for Every Dev Event <br/> You cannot miss</h1>
@@ -13,12 +17,16 @@ const Page = () => {
             <div className={'mt-20 space-y-7'}>
                 <h3>Featured Events</h3>
 
-                <ul>
-                    {[1,2,3,4,5].map((item) => (
-                        <li key={item}>Event {item}</li>
+                    <ul className='events'>
+                        {events.map((event) => (
+                            <li key={event.title}>
+                                <EventCard {...event}/>
+                            </li>
 
-                    ))}
-                </ul>
+                        ))}
+                    </ul>
+
+
             </div>
         </section>
 
