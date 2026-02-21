@@ -9,6 +9,17 @@ const Page = () => {
                 Hackathons, Meetups, and Conferences, All in one Place
             </p>
             <ExploreButton/>
+
+            <div className={'mt-20 space-y-7'}>
+                <h3>Featured Events</h3>
+
+                <ul>
+                    {[1,2,3,4,5].map((item) => (
+                        <li key={item}>Event {item}</li>
+
+                    ))}
+                </ul>
+            </div>
         </section>
 
     )
