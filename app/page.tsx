@@ -5,7 +5,7 @@ import { events } from "@/lib/constants";
 
 const Page = () => {
 
-    // events imported from @/lib/constants
+
     return (
         <section>
             <h1 className={'text-center'}>The Hub for Every Dev Event <br/> You cannot miss</h1>
