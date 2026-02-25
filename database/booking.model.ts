@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, models, HydratedDocument } from 'mongoose';
-import { Event } from './event.model';
+import Event from './event.model';
 
 /**
  * Booking domain type used across the application.
@@ -48,23 +48,16 @@ const BookingSchema = new Schema<Booking>(
  * - ensure the referenced event exists
  * - double-check email formatting prior to persistence
  */
-BookingSchema.pre<BookingDocument>('save', async function preSave(next) {
-  try {
-    // Validate email formatting at the hook level as a safety net.
-    if (!EMAIL_REGEX.test(this.email)) {
-      throw new Error('Invalid email address');
-    }
+BookingSchema.pre<BookingDocument>('save', async function preSave() {
+  // Validate email formatting at the hook level as a safety net.
+  if (!EMAIL_REGEX.test(this.email)) {
+    throw new Error('Invalid email address');
+  }
 
-    // Verify that the associated event exists before creating the booking.
-    const eventExists = await Event.exists({ _id: this.eventId });
-    if (!eventExists) {
-      throw new Error('Cannot create booking: referenced event does not exist');
-    }
-
-
-      next();
-  } catch (error) {
-    next(error as Error);
+  // Verify that the associated event exists before creating the booking.
+  const eventExists = await Event.exists({ _id: this.eventId });
+  if (!eventExists) {
+    throw new Error('Cannot create booking: referenced event does not exist');
   }
 });
 
