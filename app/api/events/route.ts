@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
         }
 
         const createdEvent = await Event.create(event)
+        console.log(createdEvent)
         return NextResponse.json({message:'Event created',status:201,event:createdEvent})
     }catch (e){
         console.error(e)
