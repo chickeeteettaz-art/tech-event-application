@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose';
+import {Schema, model, models, Document, SaveOptions} from 'mongoose';
 
 // TypeScript interface for Event document
 export interface IEvent extends Document {
@@ -110,7 +110,9 @@ const EventSchema = new Schema<IEvent>(
 );
 
 // Pre-save hook for slug generation and data normalization
-EventSchema.pre('save', function (next) {
+// Note: In Mongoose v8+, middleware are promise-based and do not receive `next`.
+// Using function() to preserve `this` binding to the document instance.
+EventSchema.pre('save', function () {
     const event = this as IEvent;
 
     // Generate slug only if title changed or document is new
@@ -127,8 +129,6 @@ EventSchema.pre('save', function (next) {
     if (event.isModified('time')) {
         event.time = normalizeTime(event.time);
     }
-
-    next();
 });
 
 // Helper function to generate URL-friendly slug
