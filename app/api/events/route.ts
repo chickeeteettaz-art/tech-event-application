@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
     }
 }
 
+
+
 export async function GET(req: NextRequest) {
     try{
         await connectDB()
@@ -54,4 +56,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({message:'Event fetching failed',error:e instanceof Error ? e.message : 'Unknown error',status:500})
     }
 }
+
+
 
