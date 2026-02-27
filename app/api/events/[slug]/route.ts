@@ -49,7 +49,7 @@ export async function GET(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { __v, ...sanitisedEvent } = event as typeof event & { __v?: number };
 
-    return NextResponse.json(sanitisedEvent, { status: 200 });
+    return NextResponse.json({sanitisedEvent}, { status: 200 });
   } catch (error) {
     // Differentiate between known validation-like errors and unexpected ones
     if (error instanceof Error) {
