@@ -2,6 +2,8 @@ import React from 'react'
 import {notFound} from "next/navigation";
 import Image from 'next/image'
 import BookEvent from "@/components/BookEvent";
+import {getSimilarEvents} from "@/lib/actions/event.actions";
+import {IEvent} from "@/database/event.model";
 
 const EventDetailsItem = ({icon,alt,label}:{icon:string,alt:string,label:string}) =>(
     <div className={'flex gap-2 items-center'}>
@@ -41,6 +43,9 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
     if(!description) return notFound()
 
     const bookings = 10;
+
+    const similarEvents:IEvent[] = await getSimilarEvents(slug)
+
     return (
         <section id='id'>
             <div className={'flex w-2/3 flex-col items-start gap-4 max-lg:w-full mb-10'}>
@@ -94,6 +99,8 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
                     </div>
                 </aside>
             </div>
+
+            <div></div>
         </section>
     )
 }
