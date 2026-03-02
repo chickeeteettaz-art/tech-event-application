@@ -18,6 +18,9 @@ export async function POST(req: NextRequest) {
         const file = formData.get('image') as File;
         if(!file) return NextResponse.json({message:'Image is required',status:400})
 
+        const tags:string = JSON.parse(formData.get('tags') as string)
+        const agenda:string = JSON.parse(formData.get('agenda') as string)
+
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const uploadResult = await new Promise((resolve, reject) => {
@@ -34,7 +37,7 @@ export async function POST(req: NextRequest) {
 
         event.image = (uploadResult as {secure_url:string}).secure_url;
 
-        const createdEvent = await Event.create(event)
+        const createdEvent = await Event.create({...event,tags:tags,agenda:agenda})
         console.log(createdEvent)
         return NextResponse.json({message:'Event created',status:201,event:createdEvent})
     }catch (e){
@@ -56,6 +59,8 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({message:'Event fetching failed',error:e instanceof Error ? e.message : 'Unknown error',status:500})
     }
 }
+
+
 
 
 

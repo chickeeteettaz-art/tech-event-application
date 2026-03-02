@@ -2,6 +2,9 @@ import React from 'react'
 import {notFound} from "next/navigation";
 import Image from 'next/image'
 import BookEvent from "@/components/BookEvent";
+import {getSimilarEvents} from "@/lib/actions/event.actions";
+import {IEvent} from "@/database/event.model";
+import EventCard from "@/components/EventCard";
 
 const EventDetailsItem = ({icon,alt,label}:{icon:string,alt:string,label:string}) =>(
     <div className={'flex gap-2 items-center'}>
@@ -41,6 +44,10 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
     if(!description) return notFound()
 
     const bookings = 10;
+
+    const similarEvents:IEvent[] = await getSimilarEvents(slug)
+    console.log(similarEvents)
+
     return (
         <section id='id'>
             <div className={'flex w-2/3 flex-col items-start gap-4 max-lg:w-full mb-10'}>
@@ -68,14 +75,14 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
                         <EventDetailsItem icon={'/icons/audience.svg'} alt={'audience'} label={audience}/>
                     </section>
 
-                    <EventAgendaItem agendaItems={JSON.parse(agenda)}/>
+                    <EventAgendaItem agendaItems={agenda}/>
 
                     <section className={'flex-col-gap-2'}>
                         <h2>About the Organizer</h2>
                         <p>{organizer}</p>
                     </section>
 
-                    <EventTags tags={JSON.parse(tags[0])}/>
+                    <EventTags tags={tags}/>
                 </div>
 
                 {/*Right side*/}
@@ -93,6 +100,15 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
                         <BookEvent/>
                     </div>
                 </aside>
+            </div>
+
+            <div className={'flex w-full flex-col gap-4 pt-20'}>
+                <h2>Similar Events</h2>
+                <div className="events">
+                    {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
+                        <EventCard key={similarEvent.title} {...similarEvent} />
+                    ))}
+                </div>
             </div>
         </section>
     )
