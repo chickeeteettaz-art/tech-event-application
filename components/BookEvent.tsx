@@ -1,39 +1,47 @@
+'use client';
 
-"use client"
-import React from 'react'
+import {useState} from "react";
+import {createBooking} from "@/lib/actions/booking.actions";
+import posthog from "posthog-js";
 
-const BookEvent = () => {
+const BookEvent = ({ eventId, slug }: { eventId: string, slug: string;}) => {
+    const [email, setEmail] = useState('');
+    const [submitted, setSubmitted] = useState(false);
 
-    const [email,setEmail] = React.useState('')
-    const [submitted,setSubmitted] = React.useState(false)
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-    const handleSubmit = async(e:React.FormEvent) =>{
-        e.preventDefault()
-        setTimeout(() => {
-            setSubmitted(true)
-        }, 1000)
+        const { success } = await createBooking( {eventId, slug, email} );
+
+        if(success) {
+            setSubmitted(true);
+            posthog.capture('event_booked', { eventId, slug, email })
+        } else {
+            console.error('Booking creation failed')
+            posthog.captureException('Booking creation failed')
+        }
     }
 
     return (
-        <div className={'flex flex-col gap-6'}>
+        <div id="book-event">
             {submitted ? (
-                <p className={'text-sm'}>Thank you for signing up</p>
-                ):(
-                    <form className={'flex flex-col gap-6'} onSubmit={handleSubmit}>
-                        <div className={'flex flex-col gap-2'}>
-                            <label htmlFor={'email'}>Email Address</label>
-                            <input
-                                type={'email'}
-                                id={'email'}
-                                value={email}
-                                placeholder={'Enter your email address'}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className={'bg-dark-200 rounded-[6px] px-5 py-2.5'}/>
-                        </div>
+                <p className="text-sm">Thank you for signing up!</p>
+            ): (
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label htmlFor="email">Email Address</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            id="email"
+                            placeholder="Enter your email address"
+                        />
+                    </div>
 
-                        <button type={'submit'} className={'bg-primary hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black'}>Submit</button>
-                    </form>
-                )}
+                    <button type="submit" className="button-submit">Submit</button>
+                </form>
+            )}
         </div>
     )
 }

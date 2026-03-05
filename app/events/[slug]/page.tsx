@@ -5,6 +5,7 @@ import BookEvent from "@/components/BookEvent";
 import {getSimilarEvents} from "@/lib/actions/event.actions";
 import {IEvent} from "@/database/event.model";
 import EventCard from "@/components/EventCard";
+import {cacheLife} from "next/cache";
 
 const EventDetailsItem = ({icon,alt,label}:{icon:string,alt:string,label:string}) =>(
     <div className={'flex gap-2 items-center'}>
@@ -36,11 +37,32 @@ const EventTags = ({tags}:{tags:string[]}) => (
 
 const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
 
+    "use cache"
+    cacheLife("hours")
     const {slug} = await params;
 
     const request = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`);
-    const {sanitisedEvent:{organizer,description,image,overview,title,date,time,location,mode,agenda,audience,tags}} = await request.json();
 
+    const {sanitisedEvent:
+        {
+            _id,
+            organizer,
+            description,
+            image,
+            overview,
+            title,
+            date,
+            time,
+            location,
+            mode,
+            agenda,
+            audience,
+            tags
+        }} = await request.json();
+
+    // Ensure we pass only plain serializable values to client components
+    const eventId = String(_id);
+    const eventSlug = slug
     if(!description) return notFound()
 
     const bookings = 10;
@@ -97,7 +119,7 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
                             <p className={'text-sm'}>Be the first to book your spot!</p>
                         )}
 
-                        <BookEvent/>
+                        <BookEvent eventId = {eventId} slug = {slug}/>
                     </div>
                 </aside>
             </div>
@@ -106,7 +128,7 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
                 <h2>Similar Events</h2>
                 <div className="events">
                     {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
-                        <EventCard key={similarEvent.title} {...similarEvent} />
+                        <EventCard key={similarEvent.title} title={similarEvent.title} image={similarEvent.image} slug={similarEvent.slug} location={similarEvent.location} date={similarEvent.date} time={similarEvent.time} />
                     ))}
                 </div>
             </div>
