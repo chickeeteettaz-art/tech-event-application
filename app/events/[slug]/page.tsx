@@ -37,8 +37,7 @@ const EventTags = ({tags}:{tags:string[]}) => (
 
 const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
 
-    "use cache"
-    cacheLife("hours")
+
     const {slug} = await params;
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
