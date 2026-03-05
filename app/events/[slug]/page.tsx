@@ -40,8 +40,10 @@ const EventDetailsPage = async ({params}:{params:Promise<{slug:string}>}) => {
     "use cache"
     cacheLife("hours")
     const {slug} = await params;
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-    const request = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`);
+    // Use a relative URL so it works in all environments (build, dev, prod) without relying on BASE_URL
+    const request = await fetch(`${BASE_URL}/api/events/${slug}`);
 
     const {sanitisedEvent:
         {
